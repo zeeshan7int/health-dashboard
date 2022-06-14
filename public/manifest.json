@@ -2,11 +2,7 @@
   "short_name": "Dashboard",
   "name": "Health Tracker Dashboard",
   "icons": [
-    {
-      "src": "favicon/android-chrome-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    }
+   
   ],
   "start_url": ".",
   "display": "standalone",
