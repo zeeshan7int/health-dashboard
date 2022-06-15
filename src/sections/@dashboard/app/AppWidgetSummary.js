@@ -28,9 +28,10 @@ AppWidgetSummary.propTypes = {
   title: PropTypes.string.isRequired,
   data: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
   sx: PropTypes.object,
+  subtitle: PropTypes.string,
 };
 
-export default function AppWidgetSummary({ title, data, icon, color = 'primary', sx, ...other }) {
+export default function AppWidgetSummary({ subtitle, title, data, icon, color = 'primary', sx, ...other }) {
   return (
     <Card
       sx={{
@@ -39,6 +40,7 @@ export default function AppWidgetSummary({ title, data, icon, color = 'primary',
         textAlign: 'center',
         color: (theme) => theme.palette[color].darker,
         bgcolor: (theme) => theme.palette[color].lighter,
+        minHeight: '260px',
         ...sx,
       }}
       {...other}
@@ -60,6 +62,9 @@ export default function AppWidgetSummary({ title, data, icon, color = 'primary',
 
       <Typography variant="subtitle2" sx={{ opacity: 0.72 }}>
         {title}
+      </Typography>
+      <Typography variant="subtitle4" sx={{ opacity: 0.72, fontSize:'.9em', px:'10px' }}>
+        {subtitle}
       </Typography>
     </Card>
   );

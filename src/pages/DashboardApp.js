@@ -1,59 +1,45 @@
-import { faker } from '@faker-js/faker';
 import { useEffect, useState } from 'react';
 // @mui
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
-import BeachAccessIcon from '@mui/icons-material/BeachAccess';
 import Avatar from '@mui/material/Avatar';
-import { useTheme } from '@mui/material/styles';
 import Divider from '@mui/material/Divider';
 import { Grid, Container, Typography, CardHeader, Box, Card } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import moment from 'moment';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
+import { onSnapshot, collection } from 'firebase/firestore';
+import db from '../firebase';
 // components
 import Page from '../components/Page';
-import Iconify from '../components/Iconify';
-import firebase from '../firebase';
 // sections
 import {
-  AppTasks,
-  AppNewsUpdate,
-  AppOrderTimeline,
-  AppHeartRates,
   AppHeartRateChart,
-  AppTrafficBySite,
   AppWidgetSummary,
-  AppCurrentSubject,
-  AppConversionRates,
 } from '../sections/@dashboard/app';
-import User from './User';
 
 // ----------------------------------------------------------------------
 
 export default function DashboardApp() {
-  const theme = useTheme();
-
-  const ref = firebase.firestore().collection('health_data');
   const [HealthData, setHealthData] = useState(null);
   const [SelectedUser, setSelectedUser] = useState(null);
   const [UsersList, setUsersList] = useState(null);
   const [UserData, setUserData] = useState(null);
   const [UserLatestData, setUserLatestData] = useState(null);
+
   useEffect(() => {
-    ref.onSnapshot((querySnapshot) => {
-      const items = [];
-      querySnapshot.forEach((doc) => {
+    let items = [];
+    const unSubscribe = onSnapshot(collection(db, 'health_data'), (querySnapshot) => {
+      items = [];
+      querySnapshot.docs.forEach((doc) => {
         items.push(doc.data());
       });
       setHealthData(items);
     })
-    return () => {
-      ref.onSnapshot(() => { });
-    }
+    return unSubscribe;
   }, [])
 
   useEffect(() => {
@@ -89,7 +75,6 @@ export default function DashboardApp() {
     setUserData(null);
     setUserLatestData(null);
   }
-
 
   return (
     <Page title="Dashboard">
@@ -129,7 +114,7 @@ export default function DashboardApp() {
       )}
       {HealthData !== null && SelectedUser !== null && UserLatestData && UserData && (<Container maxWidth="xl">
         <Typography variant='a' sx={{ color: 'blue', fontSize: '0.9em', cursor: 'pointer' }} onClick={RemoveUser}>Go Back</Typography>
-        <Grid container justifyContent="space-between" sx={{ mb: 5 }}>
+        <Grid container justifyContent="space-between" sx={{ mb: 2 }}>
           <Typography variant="h4">
             Hi, Welcome back
           </Typography>
@@ -139,7 +124,7 @@ export default function DashboardApp() {
         </Grid>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Previously Monitored Heart Rate" data={UserLatestData?.heart_rate.toFixed(0)} color="error" icon={'ant-design:heart-filled'} />
+            <AppWidgetSummary title="Heart Rate" data={UserLatestData?.heart_rate.toFixed(0)} color="error" icon={'ant-design:heart-filled'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
@@ -151,7 +136,7 @@ export default function DashboardApp() {
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Last Pose Detected" data={'Arm Press'} icon={'mdi:human-handsup'} />
+            <AppWidgetSummary title="Pose Detection" subtitle="Use the app to detect real time body posture." data={''} icon={'mdi:human-handsup'} />
           </Grid>
 
           <Grid item xs={12} md={6} lg={8} >
